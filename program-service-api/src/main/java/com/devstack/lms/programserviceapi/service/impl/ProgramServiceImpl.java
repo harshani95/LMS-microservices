@@ -1,0 +1,49 @@
+package com.devstack.lms.programserviceapi.service.impl;
+
+import com.devstack.lms.programserviceapi.dto.request.RequestProgramDto;
+import com.devstack.lms.programserviceapi.entity.Program;
+import com.devstack.lms.programserviceapi.entity.Subject;
+import com.devstack.lms.programserviceapi.repo.ProgramRepo;
+import com.devstack.lms.programserviceapi.service.ProgramService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class ProgramServiceImpl implements ProgramService {
+
+    private final ProgramRepo programRepo;
+    private final WebClient webClient;
+
+    @Override
+    public void createProgram(RequestProgramDto programDto) {
+        Program program = Program.builder()
+                .name(programDto.getName())
+                .price(programDto.getPrice())
+                .startDate(programDto.getStartDate())
+                .subjects(programDto.getSubjects())
+                .build();
+
+        ArrayList<Long> list = new ArrayList<>();
+        for (Subject sub:program.getSubjects()
+        ) {
+            list.add(sub.getId());
+        }
+
+        String ids =  list.stream().map(Object::toString).collect(Collectors.joining(", "));
+        Boolean isOk = webClient.get().uri("http://localhost:8082/api/v1/subjects/{id}",ids)
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .block();
+
+        if(Boolean.TRUE.equals(isOk)){
+            programRepo.save(program);
+        }else{
+            throw new IllegalArgumentException("Try again with available Languages");
+        }
+    }
+}
