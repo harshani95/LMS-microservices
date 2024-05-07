@@ -19,6 +19,6 @@ public class Registration {
     private Date registerDate;
     private String intake;
     private Long studentId;
-    private Long programId;
+    private String programId;
     private boolean isVerified;
 }
