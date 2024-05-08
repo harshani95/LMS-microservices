@@ -18,6 +18,7 @@ import java.util.List;
 public class SubjectServiceImpl implements SubjectService {
 
     private final SubjectRepo subjectRepo;
+
     @Override
     public void createSubject(RequestSubjectDto requestSubjectDto) {
         Subject subject = Subject.builder()
@@ -35,6 +36,17 @@ public class SubjectServiceImpl implements SubjectService {
             }
         }
         return true;
+    }
+
+    @Override
+    public List<ResponseSubjectDto> findAll() {
+        List<Subject> all = subjectRepo.findAll();
+        List<ResponseSubjectDto> dtos = new ArrayList<>();
+        for (Subject sub:all
+        ) {
+            dtos.add(new ResponseSubjectDto(sub.getId(), sub.getName(), sub.isStatus()));
+        }
+        return dtos;
     }
 
 
