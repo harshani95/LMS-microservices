@@ -6,10 +6,7 @@ import com.devstack.lms.programserviceapi.util.StandardResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/programs")
@@ -25,6 +22,15 @@ public class ProgramController {
         return new ResponseEntity<>(
                 new StandardResponse(201,"Program was saved.",requestProgramDto.getName()),
                 HttpStatus.CREATED
+        );
+    }
+
+    @GetMapping
+    private ResponseEntity<StandardResponse> findAllPrograms() {
+        return new ResponseEntity<>(
+                new StandardResponse(200, "Program List",
+                        programService.findAllPrograms()),
+                HttpStatus.OK
         );
     }
 
